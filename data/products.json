@@ -11,7 +11,12 @@
     "modelHeight": 175,
     "modelSize": "S",
     "care": "Тільки хімчистка. Зберігати на вішаку в чохлі.",
-    "photos": 4,
+    "photos": [
+      "assets/photos/lumiere-1.webp",
+      "assets/photos/lumiere-2.webp",
+      "assets/photos/lumiere-3.webp",
+      "assets/photos/lumiere-4.webp"
+    ],
     "featured": true,
     "status": "В наявності",
     "sizes": [
@@ -30,7 +35,12 @@
     "modelHeight": 176,
     "modelSize": "S",
     "care": "Тільки хімчистка. Зберігати на вішаку в чохлі, щоб не деформувати вишивку.",
-    "photos": 4,
+    "photos": [
+      "assets/photos/emerald-noir-1.webp",
+      "assets/photos/emerald-noir-2.webp",
+      "assets/photos/emerald-noir-3.webp",
+      "assets/photos/emerald-noir-4.webp"
+    ],
     "featured": true,
     "status": "В наявності",
     "sizes": [
@@ -49,7 +59,12 @@
     "modelHeight": 178,
     "modelSize": "S",
     "care": "Делікатна хімчистка. Шифон не прасувати гарячою праскою — тільки через тканину на низькій температурі.",
-    "photos": 4,
+    "photos": [
+      "assets/photos/elara-1.webp",
+      "assets/photos/elara-2.webp",
+      "assets/photos/elara-3.webp",
+      "assets/photos/elara-4.webp"
+    ],
     "featured": true,
     "status": "В наявності",
     "sizes": [

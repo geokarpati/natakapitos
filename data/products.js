@@ -11,20 +11,16 @@ window.PRODUCTS = [
     "modelHeight": 175,
     "modelSize": "S",
     "care": "Тільки хімчистка. Зберігати на вішаку в чохлі.",
-    "photos": 4,
+    "photos": [
+      "assets/photos/lumiere-1.webp",
+      "assets/photos/lumiere-2.webp",
+      "assets/photos/lumiere-3.webp",
+      "assets/photos/lumiere-4.webp"
+    ],
     "featured": true,
     "status": "В наявності",
     "sizes": [
-      {
-        "size": "S",
-        "qty": 1,
-        "bust": 0,
-        "waist": 0,
-        "hips": 0,
-        "length": 0,
-        "sleeve": 0,
-        "note": "Шнурівка ззаду регулює посадку корсета по фігурі."
-      }
+      {"size":"S","qty":1,"bust":0,"waist":0,"hips":0,"length":0,"sleeve":0,"note":"Шнурівка ззаду регулює посадку корсета по фігурі."}
     ]
   },
   {
@@ -39,20 +35,16 @@ window.PRODUCTS = [
     "modelHeight": 176,
     "modelSize": "S",
     "care": "Тільки хімчистка. Зберігати на вішаку в чохлі, щоб не деформувати вишивку.",
-    "photos": 4,
+    "photos": [
+      "assets/photos/emerald-noir-1.webp",
+      "assets/photos/emerald-noir-2.webp",
+      "assets/photos/emerald-noir-3.webp",
+      "assets/photos/emerald-noir-4.webp"
+    ],
     "featured": true,
     "status": "В наявності",
     "sizes": [
-      {
-        "size": "S",
-        "qty": 1,
-        "bust": 0,
-        "waist": 0,
-        "hips": 0,
-        "length": 0,
-        "sleeve": 0,
-        "note": "Шнурівка ззаду дає запас підгонки по талії."
-      }
+      {"size":"S","qty":1,"bust":0,"waist":0,"hips":0,"length":0,"sleeve":0,"note":"Шнурівка ззаду дає запас підгонки по талії."}
     ]
   },
   {
@@ -67,20 +59,17 @@ window.PRODUCTS = [
     "modelHeight": 178,
     "modelSize": "S",
     "care": "Делікатна хімчистка. Шифон не прасувати гарячою праскою — тільки через тканину на низькій температурі.",
-    "photos": 4,
+    "photos": [
+      "assets/photos/elara-1.webp",
+      "assets/photos/elara-2.webp",
+      "assets/photos/elara-3.webp",
+      "assets/photos/elara-4.webp"
+    ],
     "featured": true,
     "status": "В наявності",
     "sizes": [
-      {
-        "size": "S",
-        "qty": 1,
-        "bust": 0,
-        "waist": 0,
-        "hips": 0,
-        "length": 0,
-        "sleeve": 0,
-        "note": "Пояс регулює посадку по талії."
-      }
+      {"size":"S","qty":1,"bust":0,"waist":0,"hips":0,"length":0,"sleeve":0,"note":"Пояс регулює посадку по талії."}
     ]
   }
-];
+]
+;

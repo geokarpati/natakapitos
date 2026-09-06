@@ -1,9 +1,11 @@
-/* Nata Kapitos — каркас магазину. Дані: data/products.js (window.PRODUCTS) */
+/* Nata Kapitos — каркас магазину.
+   Дані беруться з data/products.json (їх редагує адмінка Pages CMS).
+   data/products.js (window.PRODUCTS) — резервна копія для локального перегляду. */
 (function () {
   'use strict';
 
   var SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  var P = window.PRODUCTS || [];
+  var P = [];
 
   /* ===== Налаштування надсилання замовлень =====
      Email (рекомендовано): зареєструйтесь на web3forms.com, отримайте безкоштовний
@@ -16,24 +18,33 @@
     telegram: { token: '', chatId: '' }
   };
 
-
   /* ---------- дрібні помічники ---------- */
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
-  function money(n) { return n.toLocaleString('uk-UA') + ' грн'; }
+  function money(n) { return Number(n || 0).toLocaleString('uk-UA') + ' грн'; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function byId(sku) { for (var i = 0; i < P.length; i++) if (P[i].sku === sku) return P[i]; return null; }
-  function inStock(p) { return p.sizes.some(function (s) { return s.qty > 0; }); }
+  function inStock(p) { return (p.sizes || []).some(function (s) { return s.qty > 0; }); }
   function ph(cls, label) { return '<div class="ph ' + cls + '">' + esc(label) + '</div>'; }
 
-  // Фото товару: <img> з фолбеком на плейсхолдер, якщо файлу немає
-  function pimg(sku, n, cls, alt) {
-    var src = 'assets/photos/' + sku + '-' + n + '.webp';
+  // Фото товару: photos — масив шляхів. photo(p, n) повертає n-те фото (1-based).
+  function photo(p, n) {
+    var arr = (p && Array.isArray(p.photos)) ? p.photos : [];
+    if (arr.length) return arr[(n || 1) - 1] || arr[0];
+    return 'assets/photos/' + (p ? p.sku : '') + '-' + (n || 1) + '.webp';
+  }
+  function photoCount(p) {
+    if (p && Array.isArray(p.photos)) return p.photos.length || 1;
+    if (p && typeof p.photos === 'number') return p.photos;
+    return 1;
+  }
+  // <img> з фолбеком на плейсхолдер, якщо файлу немає
+  function pimg(src, cls, alt) {
     var fb = "this.onerror=null;this.parentNode.innerHTML='" +
-             "<div class=\\'ph " + cls + "\\'>" + esc(sku + ' · фото ' + n) + "</div>'";
+             "<div class=\\'ph " + cls + "\\'>" + esc(alt || 'фото') + "</div>'";
     return '<div class="imgwrap ' + cls + '">' +
-      '<img src="' + src + '" alt="' + esc(alt || '') + '" loading="lazy" onerror="' + fb + '">' +
+      '<img src="' + esc(src) + '" alt="' + esc(alt || '') + '" loading="lazy" onerror="' + fb + '">' +
       '</div>';
   }
 
@@ -65,16 +76,16 @@
 
   /* ---------- картка товару в сітці ---------- */
   function cardHTML(p) {
-    var sizes = p.sizes.map(function (s) {
+    var sizes = (p.sizes || []).map(function (s) {
       return '<span class="sz' + (s.qty > 0 ? '' : ' out') + '">' + esc(s.size) + '</span>';
     }).join('');
-    var left = p.sizes.reduce(function (a, s) { return a + s.qty; }, 0);
+    var left = (p.sizes || []).reduce(function (a, s) { return a + s.qty; }, 0);
     var badge = left === 0
       ? '<span class="badge low">Немає в наявності</span>'
       : (left <= 2 ? '<span class="badge low">Залишилось ' + left + '</span>'
                    : '<span class="badge ok">В наявності</span>');
     return '<a class="card" href="product.html?sku=' + encodeURIComponent(p.sku) + '">' +
-      pimg(p.sku, 1, 'card-img', p.name) +
+      pimg(photo(p, 1), 'card-img', p.name) +
       '<div class="card-b">' + badge +
       '<span class="card-name">' + esc(p.name) + '</span>' +
       '<span class="card-price">' + money(p.price) + '</span>' +
@@ -121,7 +132,7 @@
         if (sil.length && sil.indexOf(p.silhouette) < 0) return false;
         if (p.price > maxPrice) return false;
         if (onlyStock && !inStock(p)) return false;
-        if (szs.length && !p.sizes.some(function (s) {
+        if (szs.length && !(p.sizes || []).some(function (s) {
           return szs.indexOf(s.size) >= 0 && s.qty > 0; })) return false;
         return true;
       });
@@ -168,28 +179,29 @@
     document.title = p.name + ' — Nata Kapitos';
 
     var chosenSize = null;
-    var firstAvail = p.sizes.filter(function (s) { return s.qty > 0; })[0];
+    var firstAvail = (p.sizes || []).filter(function (s) { return s.qty > 0; })[0];
     if (firstAvail) chosenSize = firstAvail.size;
 
     $('#crumb-cat').textContent = p.category;
     $('#crumb-cat').href = 'catalog.html?cat=' + encodeURIComponent(p.category);
     $('#crumb-name').textContent = p.name;
 
+    var count = photoCount(p);
     var thumbs = [];
-    for (var i = 1; i <= p.photos; i++) thumbs.push(i);
+    for (var i = 1; i <= count; i++) thumbs.push(i);
 
     root.innerHTML =
       '<div>' +
-        '<div id="gal-main">' + pimg(p.sku, 1, 'gal-main', p.name) + '</div>' +
+        '<div id="gal-main">' + pimg(photo(p, 1), 'gal-main', p.name) + '</div>' +
         '<div class="gal-thumbs">' + thumbs.map(function (n) {
           return '<div class="thumb' + (n === 1 ? ' sel' : '') + '" data-n="' + n + '">' +
-            pimg(p.sku, n, 'thumb-img', p.name + ' фото ' + n) + '</div>';
+            pimg(photo(p, n), 'thumb-img', p.name + ' фото ' + n) + '</div>';
         }).join('') + '</div>' +
       '</div>' +
       '<div>' +
         '<h1>' + esc(p.name) + '</h1>' +
-        '<div class="pd-sku">Артикул ' + esc(p.sku) + ' · ' + esc(p.category.toLowerCase()) +
-          ' · силует «' + esc(p.silhouette.toLowerCase()) + '» · ' + esc(p.color.toLowerCase()) + '</div>' +
+        '<div class="pd-sku">Артикул ' + esc(p.sku) + ' · ' + esc(String(p.category).toLowerCase()) +
+          ' · силует «' + esc(String(p.silhouette).toLowerCase()) + '» · ' + esc(String(p.color).toLowerCase()) + '</div>' +
         '<div class="pd-price">' + money(p.price) + '</div>' +
         '<div class="stock ' + (inStock(p) ? 'ok' : 'no') + '" id="stockline"></div>' +
         '<div class="pick-head"><span>Розмір</span>' +
@@ -225,7 +237,7 @@
     }
 
     function paintSizes() {
-      $('#szpick').innerHTML = p.sizes.map(function (s) {
+      $('#szpick').innerHTML = (p.sizes || []).map(function (s) {
         return '<button type="button" data-size="' + s.size + '"' +
           (s.qty > 0 ? '' : ' disabled') +
           ' aria-pressed="' + (s.size === chosenSize) + '">' + s.size + '</button>';
@@ -237,7 +249,7 @@
     }
 
     function paintMeas() {
-      var s = p.sizes.filter(function (x) { return x.size === chosenSize; })[0] || p.sizes[0];
+      var s = (p.sizes || []).filter(function (x) { return x.size === chosenSize; })[0] || (p.sizes || [])[0] || {};
       var rows = [['Обхват грудей', s.bust], ['Обхват талії', s.waist]];
       if (s.hips) rows.push(['Обхват стегон', s.hips]);
       rows.push(['Довжина виробу', s.length]);
@@ -250,24 +262,23 @@
                        : '<td></td><td></td>') + '</tr>';
       }
       $('#meas').innerHTML =
-        '<h4>Заміри виробу, розмір ' + esc(s.size) + '</h4>' +
+        '<h4>Заміри виробу, розмір ' + esc(s.size || '') + '</h4>' +
         '<table>' + cells + '</table>' +
         (s.note ? '<div class="model">' + esc(s.note) + '</div>' : '') +
-        '<div class="model">На фото: зріст ' + p.modelHeight + ' см, розмір ' + esc(p.modelSize) + '</div>';
+        '<div class="model">На фото: зріст ' + esc(p.modelHeight) + ' см, розмір ' + esc(p.modelSize) + '</div>';
 
-      var left = p.sizes.reduce(function (a, x) { return a + x.qty; }, 0);
+      var left = (p.sizes || []).reduce(function (a, x) { return a + x.qty; }, 0);
       $('#stockline').textContent = left
         ? 'В наявності, відправка наступного робочого дня'
         : 'Зараз немає в наявності';
       $('#add').disabled = !left;
-
     }
 
     $$('.gal-thumbs .thumb').forEach(function (t) {
       t.addEventListener('click', function () {
         $$('.gal-thumbs .thumb').forEach(function (x) { x.classList.remove('sel'); });
         t.classList.add('sel');
-        $('#gal-main').innerHTML = pimg(p.sku, t.dataset.n, 'gal-main', p.name);
+        $('#gal-main').innerHTML = pimg(photo(p, +t.dataset.n), 'gal-main', p.name);
       });
     });
 
@@ -299,7 +310,7 @@
       }
       wrap.innerHTML = c.map(function (it, idx) {
         var p = byId(it.sku); if (!p) return '';
-        return '<div class="cartrow">' + pimg(p.sku, 1, 'cart-img', p.name) +
+        return '<div class="cartrow">' + pimg(photo(p, 1), 'cart-img', p.name) +
           '<div><div class="card-name">' + esc(p.name) + '</div>' +
           '<div class="small muted">Артикул ' + esc(p.sku) + ' · розмір ' + esc(it.size) + '</div>' +
           '<button class="linkbtn" data-i="' + idx + '">Прибрати</button></div>' +
@@ -379,7 +390,16 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  /* ---------- запуск: спершу читаємо products.json, інакше — резервні дані ---------- */
+  function startApp(list) {
+    P = Array.isArray(list) ? list : [];
     paintCount(); initNav(); initHome(); initCatalog(); initProduct(); initCart();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch('data/products.json', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('no json'); return r.json(); })
+      .then(function (d) { startApp(Array.isArray(d) ? d : (d && d.products) || []); })
+      .catch(function () { startApp(window.PRODUCTS || []); });
   });
 })();

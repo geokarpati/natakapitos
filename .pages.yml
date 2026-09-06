@@ -1,0 +1,94 @@
+# Конфігурація адмінки Pages CMS (app.pagescms.org)
+media:
+  input: assets/photos
+  output: assets/photos
+
+content:
+  - name: products
+    label: Сукні
+    type: file
+    path: data/products.json
+    format: json
+    list: true
+    view:
+      fields: [name, category, price, status]
+    fields:
+      - name: name
+        label: Назва
+        type: string
+      - name: sku
+        label: Артикул (латиницею, напр. aurora)
+        type: string
+        pattern: "^[a-z0-9-]+$"
+      - name: category
+        label: Категорія
+        type: select
+        options:
+          values: [Весільні, Вечірні, Корсети]
+      - name: silhouette
+        label: Силует
+        type: select
+        options:
+          values: [А-силует, Русалка, Пряма, Корсет]
+      - name: price
+        label: Ціна, грн
+        type: number
+      - name: color
+        label: Колір
+        type: string
+      - name: fabric
+        label: Тканина і склад
+        type: text
+      - name: description
+        label: Опис
+        type: text
+      - name: modelHeight
+        label: Зріст моделі на фото, см
+        type: number
+      - name: modelSize
+        label: Розмір моделі на фото
+        type: string
+      - name: care
+        label: Догляд за виробом
+        type: text
+      - name: photos
+        label: Фото (перше — головне на картці)
+        type: image
+        list: true
+      - name: featured
+        label: Показувати на головній
+        type: boolean
+      - name: status
+        label: Статус (напр. «В наявності»)
+        type: string
+      - name: sizes
+        label: Розміри та заміри виробу
+        type: object
+        list: true
+        fields:
+          - name: size
+            label: Розмір
+            type: select
+            options:
+              values: [XS, S, M, L, XL, XXL]
+          - name: qty
+            label: Скільки в наявності (0 = немає)
+            type: number
+          - name: bust
+            label: Обхват грудей, см
+            type: number
+          - name: waist
+            label: Обхват талії, см
+            type: number
+          - name: hips
+            label: Обхват стегон, см
+            type: number
+          - name: length
+            label: Довжина виробу, см
+            type: number
+          - name: sleeve
+            label: Довжина рукава, см
+            type: number
+          - name: note
+            label: Примітка під таблицею
+            type: string
