@@ -117,6 +117,16 @@
       "assets/photos/il_fullxfull.8339688074_a97g.webp"
     ],
     "featured": true,
-    "status": "В наявності"
+    "status": "В наявності",
+    "sizes": [
+      {
+        "qty": 1,
+        "bust": 0,
+        "waist": 0,
+        "hips": 0,
+        "length": 0,
+        "sleeve": 0
+      }
+    ]
   }
 ]
